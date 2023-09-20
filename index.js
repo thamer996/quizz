@@ -4,7 +4,7 @@ const cors = require('cors');
 const db = require('./db');
 
 const app = express();
-const port = 3000;
+const port = 3000||process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -25,6 +25,6 @@ app.use('/api/Clients', clientRoutes);
 app.use('/api/QuizzResults', quizResultsRoutes);
 app.use('/api/ClientBadges', clientBadgesRoutes);
 
-app.listen(port||process.env.PORT, () => {
+app.listen(port, () => {
   console.log('Server is running.....');
 });

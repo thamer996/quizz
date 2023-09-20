@@ -10,6 +10,14 @@ exports.createAdmin = async (req, res) => {
     res.status(500).json({ error: 'Could not create admin.' });
   }
 };
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    res.json(admins);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving admins.' });
+  }
+};
 
 // GET
 exports.getAdmin = async (req, res) => {
