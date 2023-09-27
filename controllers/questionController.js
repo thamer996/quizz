@@ -24,6 +24,14 @@ exports.getQuestion = async (req, res) => {
     res.status(500).json({ error: 'Error retrieving question.' });
   }
 };
+exports.getAllQestions = async (req, res) => {
+  try {
+    const questions = await Questions.find();
+    res.json(questions);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving admins.' });
+  }
+};
 
 // UPDATE
 exports.updateQuestion = async (req, res) => {

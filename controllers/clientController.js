@@ -12,6 +12,14 @@ exports.createClient = async (req, res) => {
 };
 
 //GET
+exports.getAllClients = async (req, res) => {
+  try {
+    const clients = await Client.find();
+    res.json(clients);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving admins.' });
+  }
+};
 exports.getClient = async (req, res) => {
   try {
     console.log('getClient function called');
