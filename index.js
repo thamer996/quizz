@@ -4,7 +4,7 @@ const cors = require('cors');
 const db = require('./db');
 
 const app = express();
-const port = 3000||process.env.PORT;
+const port = 5000||process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -16,6 +16,7 @@ const quizRoutes = require('./routes/quizzesRoutes');
 const questionRoutes = require('./routes/questionsRoutes');
 const quizResultsRoutes = require('./routes/quizResultsRoutes');
 const clientBadgesRoutes = require('./routes/clientbdgRoutes');
+const categorieRoutes = require('./routes/categorieRoutes');
 
 app.use('/api/Questions', questionRoutes);
 app.use('/api/Badges', badgeRoutes);
@@ -24,7 +25,8 @@ app.use('/api/Admins', adminRoutes);
 app.use('/api/Clients', clientRoutes);
 app.use('/api/QuizzResults', quizResultsRoutes);
 app.use('/api/ClientBadges', clientBadgesRoutes);
+app.use('/api/Categories', categorieRoutes);
 
 app.listen(port, () => {
-  console.log('Server is running.....');
+  console.log(`Serveur en cours d'exécution sur le port ${port}`);
 });

@@ -10,7 +10,14 @@ exports.createQuiz = async (req, res) => {
     res.status(500).json({ error: 'Could not create quiz.' });
   }
 };
-
+exports.getAllQuiz = async (req, res) => {
+  try {
+    const quiz = await Quizzes.find();
+    res.json(quiz);
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving quizzs.' });
+  }
+};
 // GET
 exports.getQuiz = async (req, res) => {
   try {
