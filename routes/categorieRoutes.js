@@ -9,6 +9,6 @@ router.get('/categories/:id/quizzes', categorieController.getQuizzesByCategory);
 router.post('/:id/quizzes', categorieController.createQuizForCategory);
 router.get('/:CategorieID', categorieController.getCategorieById);
 router.put('/:CategorieID', categorieController.updateCategorie);
-router.delete('/:CategorieID', categorieController.deleteCategorie);
+router.delete('/:id', categorieController.deleteCategorie);
 
 module.exports = router;

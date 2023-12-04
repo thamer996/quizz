@@ -88,12 +88,30 @@ exports.updateCategorie = async (req, res) => {
 // Supprimer une catégorie par ID
 exports.deleteCategorie = async (req, res) => {
   try {
-    const categorie = await Categories.findByIdAndRemove(req.params.id);
+    // Récupérer l'ID de la catégorie à supprimer
+    const categorieId = req.params.id;
+
+    // Récupérer tous les quizzes associés à la catégorie
+    const quizzesToDelete = await Quizzes.find({ categorie: categorieId });
+
+    // Supprimer chaque quiz associé à la catégorie
+    const deleteQuizPromises = quizzesToDelete.map(async (quiz) => {
+      await Quizzes.findByIdAndRemove(quiz._id);
+    });
+
+    // Attendre la suppression de tous les quizzes
+    await Promise.all(deleteQuizPromises);
+
+    // Supprimer la catégorie elle-même
+    const categorie = await Categories.findByIdAndRemove(categorieId);
+
     if (!categorie) {
       return res.status(404).json({ error: 'Category not found.' });
     }
-    res.status(204).end();
+
+    res.status(200).json({ message: 'Category and associated quizzes deleted.' });
   } catch (error) {
-    res.status(500).json({ error: 'Could not delete category.' });
+    console.error(error);
+    res.status(500).json({ error: 'Could not delete category and associated quizzes.' });
   }
 };
