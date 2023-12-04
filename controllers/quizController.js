@@ -1,4 +1,5 @@
 const Quizzes = require('../Models/Quizzes');
+const Questions = require('../Models/Questions');
 
 // POST
 exports.createQuiz = async (req, res) => {
@@ -10,6 +11,45 @@ exports.createQuiz = async (req, res) => {
     res.status(500).json({ error: 'Could not create quiz.' });
   }
 };
+exports.createQuestionForQuiz = async (req, res) => {
+  try {
+    const quizId = req.params.id; // Assuming you are passing the quiz ID as a parameter
+    const quiz = await Quizzes.findById(quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz not found.' });
+    }
+
+    const question = new Questions(req.body); // Assuming you have a Questions model
+    await question.save();
+
+    // Add the newly created question to the questions array in the quiz
+    quiz.questions.push(question._id);
+    await quiz.save();
+
+    res.status(201).json(question);
+  } catch (error) {
+    console.error('Error creating question for quiz:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+exports.getQuestionsByQuiz = async (req, res) => {
+  try {
+    const quizId = req.params.id; // Assuming you are passing the quiz ID as a parameter
+    const quiz = await Quizzes.findById(quizId).populate('questions');
+
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz not found.' });
+    }
+
+    res.status(200).json(quiz.questions);
+  } catch (error) {
+    console.error('Error retrieving questions by quiz:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
 exports.getAllQuiz = async (req, res) => {
   try {
     const quiz = await Quizzes.find().populate('questions')
