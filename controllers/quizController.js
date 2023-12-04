@@ -12,7 +12,7 @@ exports.createQuiz = async (req, res) => {
 };
 exports.getAllQuiz = async (req, res) => {
   try {
-    const quiz = await Quizzes.find();
+    const quiz = await Quizzes.find().populate('questions')
     res.json(quiz);
   } catch (error) {
     res.status(500).json({ error: 'Error retrieving quizzs.' });

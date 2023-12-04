@@ -4,7 +4,7 @@ const categorieController = require('../controllers/categorieController');
 
 // Catégorie CRUD routes
 router.post('/', categorieController.createCategorie);
-router.get('/', categorieController.getCategories);
+router.get('/', categorieController.getCategory);
 router.get('/:CategorieID', categorieController.getCategorieById);
 router.put('/:CategorieID', categorieController.updateCategorie);
 router.delete('/:CategorieID', categorieController.deleteCategorie);

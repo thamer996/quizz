@@ -12,12 +12,13 @@ exports.createCategorie = async (req, res) => {
 };
 
 // Récupérer toutes les catégories
-exports.getCategories = async (req, res) => {
+exports.getCategory = async (req, res) => {
   try {
-    const categories = await Categories.find();
-    res.status(200).json(categories);
+    const categories = await Categories.find().populate('quizzes');
+    res.json(categories);
   } catch (error) {
-    res.status(500).json({ error: 'Could not retrieve categories.' });
+    console.error('Error retrieving category:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 };
 
