@@ -1,5 +1,5 @@
 const Categories = require('../Models/Categories');
-
+const Quizzes = require('../Models/Quizzes');
 // Créer une nouvelle catégorie
 exports.createCategorie = async (req, res) => {
   try {
@@ -21,6 +21,28 @@ exports.getCategory = async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
+exports.createQuizForCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id; // Assuming you are passing the category ID as a parameter
+    const category = await Categories.findById(categoryId);
+
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found.' });
+    }
+
+    const quiz = new Quizzes(req.body);
+    await quiz.save();
+
+    // Add the newly created quiz to the quizzes array in the category
+    category.quizzes.push(quiz._id);
+    await category.save();
+
+    res.status(201).json(quiz);
+  } catch (error) {
+    console.error('Error creating quiz for category:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
 
 // Récupérer une catégorie par ID
 exports.getCategorieById = async (req, res) => {
@@ -32,6 +54,21 @@ exports.getCategorieById = async (req, res) => {
     res.status(200).json(categorie);
   } catch (error) {
     res.status(500).json({ error: 'Could not retrieve category.' });
+  }
+};
+exports.getQuizzesByCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id; // Assuming you are passing the category ID as a parameter
+    const category = await Categories.findById(categoryId).populate('quizzes');
+    
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found.' });
+    }
+
+    res.status(200).json(category.quizzes);
+  } catch (error) {
+    console.error('Error retrieving quizzes by category:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 };
 
