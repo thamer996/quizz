@@ -1,30 +1,22 @@
-const bcrypt = require('bcrypt');
 const Client = require('../Models/Client');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 
-
-//generating key
-const generateSecretKey = () => {
-  return crypto.randomBytes(32).toString('hex');
-};
-
-
-//sign-in
-exports.login = async (req, res) => {
-  const { Email, Password } = req.body;
-
+exports.signinController = async (req, res) => {
   try {
-    const user = await Client.findOne({ Email: Email });
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    const { telephone, motdepasse } = req.body;
 
-    const validPassword = await bcrypt.compare(Password, user.Password);
-    if (!validPassword) return res.status(401).json({ error: 'Invalid credentials' });
+    // Recherchez l'utilisateur dans la base de données
+    const user = await Client.findOne({ telephone });
+    if (!user || !(await bcrypt.compare(motdepasse, user.motdepasse))) {
+      return res.status(401).json({ message: 'Nom d\'utilisateur ou mot de passe incorrect.' });
+    }
 
-    const secretKey = generateSecretKey();
-       const token = jwt.sign({ Email: user.Email }, secretKey, { expiresIn: '1h' });
-       res.json({ token });
-     } catch (error) {
-       res.status(500).json({ error: 'An error occurred' });
-     }
-   };
+    // Générez un jeton JWT et renvoyez-le au client
+    const token = jwt.sign({ telephone: user.telephone }, 'secretKey', { expiresIn: '1h' });
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erreur lors de la connexion.' });
+  }
+};

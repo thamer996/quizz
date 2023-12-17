@@ -1,31 +1,51 @@
-const bcrypt = require('bcrypt');
 const Client = require('../Models/Client');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 
-
-//sign-up
-exports.signup = async (req, res) => {
-  const { FirstName,LastName, Email,Profession,Password } = req.body;
-
+exports.signupController = async (req, res) => {
   try {
-  console.log('signup function called');
-  console.log('Received data:',req.body);
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(Password, saltRounds);
-    console.log('Hashed Password:', hashedPassword);
-    const newUser = new Client({
-      FirstName: FirstName,
-      LastName: LastName,
-      Email: Email,
-      Profession: Profession,
-      Password: hashedPassword,
-    });
-    await newUser.save();
+    const {
+      nom,
+      prenom,
+      motdepasse,
+      pseudo,
+      adresse,
+      mail,
+      telephone,
+      profession,
+      annee,
+      domaine
+      
+    } = req.body;
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // Vérifiez si l'utilisateur existe déjà
+    const existingUser = await Client.findOne({ telephone });
+    if (existingUser) {
+      return res.status(409).json({ message: 'L\'utilisateur existe déjà.' });
+    }
+
+    // Hash du mot de passe avant de le stocker
+    const hashedPassword = await bcrypt.hash(motdepasse, 10);
+
+    // Créez un nouvel utilisateur dans la base de données
+    const newClient = new Client({
+      nom,
+      prenom,
+      pseudo,
+      adresse,
+      mail,
+      telephone,
+      profession,
+      annee,
+      domaine,
+      motdepasse: hashedPassword
+    });
+
+    await newClient.save();
+
+    res.status(201).json({ message: 'Inscription réussie.' });
   } catch (error) {
-  console.log('Error:', error);
-    res.status(500).json({ error: 'An error occurred' });
+    console.error(error);
+    res.status(500).json({ error: 'Erreur lors de l\'inscription.' });
   }
 };

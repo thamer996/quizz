@@ -1,8 +1,11 @@
 const Client = require('../Models/Client');
-
+const bcrypt = require('bcrypt');
 //POST
 exports.createClient = async (req, res) => {
   try {
+    const hashedPassword = await bcrypt.hash(req.body.motdepasse, 10);
+    req.body.motdepasse = hashedPassword;
+
     const client = new Client(req.body);
     await client.save();
     res.status(201).json(client);
