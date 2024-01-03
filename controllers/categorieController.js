@@ -14,11 +14,20 @@ exports.createCategorie = async (req, res) => {
 // Récupérer toutes les catégories
 exports.getCategory = async (req, res) => {
   try {
-    const categories = await Categories.find().populate('quizzes');
+    const categories = await Categories.find()
+      .populate({
+        path: 'quizzes',
+        populate: {
+          path: 'questions',
+          model: 'Questions', // Make sure this matches your Questions model name
+        },
+      })
+      .exec();
+
     res.json(categories);
   } catch (error) {
-    console.error('Error retrieving category:', error);
-    res.status(500).json({ error: 'Internal server error.' });
+    console.error('Error retrieving categories:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 exports.createQuizForCategory = async (req, res) => {

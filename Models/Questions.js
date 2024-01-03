@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const questionSchema = new mongoose.Schema({
   texte: { type: String, required: true },
   options: [{ text: String, isCorrect: Boolean }],
+  informations: { type: String },
   // D'autres champs pour les informations de la question
+
 });
 
 const Questions = mongoose.model('Questions', questionSchema);
